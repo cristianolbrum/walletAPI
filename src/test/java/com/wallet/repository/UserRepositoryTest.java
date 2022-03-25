@@ -1,7 +1,13 @@
 package com.wallet.repository;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.Optional;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +24,21 @@ public class UserRepositoryTest {
 
 	@Autowired 
 	UserRepository repository;
+	public static final String EMAIL = "email@teste.com";
+	@Before
+	public void setUp() {
+		User u = new User();
+		u.setName("Set Up User");
+		u.setPassword("Senha1234");
+		u.setEmail(EMAIL);
+		
+		repository.save(u);
+	}
+	
+	@After
+	public void tearDown() {
+		repository.deleteAll();
+	}
 	
 	@Test
 	public void saveTest() {
@@ -28,5 +49,11 @@ public class UserRepositoryTest {
 		
 		User response = repository.save(u);
 		assertNotNull(response);
+	}
+	
+	public void testFindByEmail() {
+		Optional<User> response = repository.findByEmail(EMAIL);
+		assertTrue(response.isPresent());
+		assertEquals(response.get().getEmail(), EMAIL);
 	}
 }
